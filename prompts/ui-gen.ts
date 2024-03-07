@@ -174,6 +174,8 @@ ${currentCode}
 `;
   }
 
+  console.log(">>>>>>prompt", prompt)
+
   const { code, usage, description } = await getCode(
     [
       {
@@ -189,12 +191,12 @@ ${currentCode}
           },
           ...images.map(
             (image) =>
-              ({
-                type: "image_url",
-                image_url: {
-                  url: image,
-                },
-              } as const)
+            ({
+              type: "image_url",
+              image_url: {
+                url: image,
+              },
+            } as const)
           ),
         ],
       },
