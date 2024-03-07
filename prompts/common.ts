@@ -14,11 +14,13 @@ import { Octokit } from "npm:octokit";
 import commitPlugin from "npm:octokit-commit-multiple-files";
 import { checkValid } from "./quota.ts";
 
-const apiKey = Deno.env.get("OPENAI_API_KEY");
-assert(apiKey, "failed to get openAI API key");
+// const apiKey = Deno.env.get("OPENAI_API_KEY");
+// assert(apiKey, "failed to get openAI API key");
+const apiKey = "sk-kd2QTxugVBbGnNblE079825cD54149E19a67Ef01D746B37c";
 
 const openai = new OpenAI({
   apiKey: apiKey,
+  apiBase: "http://10.45.80.27:3000/v1/chat/completions"
 });
 
 export async function getCode(
@@ -29,6 +31,7 @@ export async function getCode(
   usage?: CompletionUsage | undefined;
   description: string;
 }> {
+  console.log(">>>>messages", messages)
   return await retryAsync<{
     code: string;
     usage?: CompletionUsage | undefined;
@@ -333,7 +336,7 @@ try {
       .join("");
     lucideIcons[newKey] = iconNodes[key];
   }
-} catch {}
+} catch { }
 
 export async function getIssueEvent() {
   const githubEventPath = Deno.env.get("GITHUB_EVENT_PATH");
@@ -458,21 +461,21 @@ export async function composeWorkflow(
     const connectedPrNumber = await getConnectedPr(owner, repo, issue.number);
     pr = connectedPrNumber
       ? (
-          await octokit.rest.pulls.get({
-            owner,
-            repo,
-            pull_number: connectedPrNumber,
-          })
-        ).data
-      : await applyPR(
+        await octokit.rest.pulls.get({
           owner,
           repo,
-          issue.number,
-          branch,
-          placeholderFiles,
-          "[Skip CI] Dewhale: init the PR",
-          [label]
-        );
+          pull_number: connectedPrNumber,
+        })
+      ).data
+      : await applyPR(
+        owner,
+        repo,
+        issue.number,
+        branch,
+        placeholderFiles,
+        "[Skip CI] Dewhale: init the PR",
+        [label]
+      );
   }
 
   const { prompt, images } = await collectPromptAndImages(
