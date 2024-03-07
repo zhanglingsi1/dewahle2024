@@ -156,6 +156,7 @@ async function main() {
   const result = await composeWorkflow(uiGenLabel, {
     "preview-ui/src/Preview.jsx": PLACEHOLDER_CODE,
   });
+  console.log(">>>>>>>result", result)
 
   if (!result) {
     return;
